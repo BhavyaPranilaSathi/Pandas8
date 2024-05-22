@@ -1,0 +1,110 @@
+Pandas8
+
+1 Problem 1: Find Total Time Spent By Each Employee 
+
+
+sol 1:
+
+import pandas as pd
+
+def total_time(employees: pd.DataFrame) -> pd.DataFrame:
+    df =employees.groupby(['emp_id','event_day'])[['in_time','out_time']].sum().reset_index()
+    df['total_time'] = df['out_time']-df['in_time']
+    df = df[['emp_id', 'event_day', 'total_time']]
+    return df.rename(columns={'event_day':'day'})
+
+
+
+
+sol 2:
+
+import pandas as pd
+
+def total_time(employees: pd.DataFrame) -> pd.DataFrame:
+
+    employees['total_time']=employees['out_time']-employees['in_time']
+    df = employees.groupby(['emp_id','event_day'])['total_time'].sum().reset_index()
+    return df[['event_day','emp_id','total_time']].rename(columns={'event_day':'day'})
+    
+
+sol 3:
+
+import pandas as pd
+
+def total_time(employees: pd.DataFrame) -> pd.DataFrame:
+
+    employees['total_time']=employees['out_time']-employees['in_time']
+    employees = employees.groupby(['emp_id','event_day'])['total_time'].sum().reset_index()
+    employees.rename({'event_day':'day'}, axis =1, inplace=True)
+    return employees
+
+
+
+
+
+
+2 Problem 2 : Number of Unique Subjects Taught By Each Teacher 
+
+
+
+sol 1:
+
+import pandas as pd
+
+def count_unique_subjects(teacher: pd.DataFrame) -> pd.DataFrame:
+    df= teacher.groupby(['teacher_id'])['subject_id'].nunique().reset_index()
+    return df.rename(columns={'subject_id':'cnt'})
+
+
+
+
+sol 2:
+
+import pandas as pd
+
+def count_unique_subjects(teacher: pd.DataFrame) -> pd.DataFrame:   
+    df = teacher.drop_duplicates(subset=['teacher_id', 'subject_id'])
+    fin_df = df.groupby('teacher_id').size().reset_index()
+    fin_df.columns = ['teacher_id', 'cnt']
+    return fin_df
+
+
+
+
+
+
+3 Problem 3 : Classes more than 5 Students 
+
+
+sol 1:
+
+import pandas as pd
+
+def find_classes(courses: pd.DataFrame) -> pd.DataFrame:
+    df=courses.groupby('class')['student'].count().reset_index(name='num_students')
+    result = df[df['num_students']>=5] 
+    return pd.DataFrame(result['class'])
+
+
+sol 2:
+
+import pandas as pd
+
+def find_classes(courses: pd.DataFrame) -> pd.DataFrame:
+
+    df=courses.groupby('class')['student'].nunique().reset_index(name='num_students')
+    result = df[df['num_students']>=5] 
+    return pd.DataFrame(result['class'])
+
+
+
+sol 3:
+
+import pandas as pd
+
+def find_classes(courses: pd.DataFrame) -> pd.DataFrame:
+
+    class_counts = courses.groupby('class')['student'].size().reset_index(name='num_students')
+    valid_classes = class_counts[class_counts['num_students'] >= 5]
+    return pd.DataFrame(valid_classes['class'])
+
